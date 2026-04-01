@@ -476,7 +476,15 @@ export default function Home() {
         );
       }
 
-      toast.success(`Resume sent to ${recipient}.`, {
+      if (data.attachmentType === "html") {
+        toast(`Resume sent to ${recipient} with HTML fallback attachment.`, {
+          id: emailToastId,
+          icon: "⚠",
+        });
+        return;
+      }
+
+      toast.success(`Resume sent to ${recipient} as PDF.`, {
         id: emailToastId,
       });
     } catch (error) {

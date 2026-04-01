@@ -43,6 +43,12 @@ const sanitizeFileName = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "") || "resume";
 
+type MailAttachment = {
+  filename: string;
+  content: Buffer | string;
+  contentType: string;
+};
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -112,7 +118,23 @@ export async function POST(req: NextRequest) {
       title: job.title,
       company: job.company,
     });
-    const attachmentPdf = await generateResumePdf(attachmentHtml);
+    let attachment: MailAttachment;
+
+    try {
+      const attachmentPdf = await generateResumePdf(attachmentHtml);
+      attachment = {
+        filename: `${sanitizeFileName(job.company)}-${sanitizeFileName(job.title)}-resume.pdf`,
+        content: attachmentPdf,
+        contentType: "application/pdf",
+      };
+    } catch (error) {
+      console.error("PDF generation failed, falling back to HTML attachment:", error);
+      attachment = {
+        filename: `${sanitizeFileName(job.company)}-${sanitizeFileName(job.title)}-resume.html`,
+        content: attachmentHtml,
+        contentType: "text/html; charset=utf-8",
+      };
+    }
 
     const jobUrlMarkup = job.url
       ? `<p><strong>Job URL:</strong> <a href="${job.url}">${job.url}</a></p>`
@@ -127,26 +149,25 @@ export async function POST(req: NextRequest) {
         `Company: ${job.company}`,
         `Job URL: ${job.url || "Not provided"}`,
         "",
-        "The tailored resume is attached as a PDF file.",
+        `The tailored resume is attached as a ${attachment.contentType === "application/pdf" ? "PDF" : "HTML"} file.`,
       ].join("\n"),
       html: `
         <div style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.6;">
           <p>Please find the tailored resume attached.</p>
           <p><strong>Job Title:</strong> ${job.title}</p>
           <p><strong>Company:</strong> ${job.company}</p>
+          <p><strong>Attachment Type:</strong> ${attachment.contentType === "application/pdf" ? "PDF" : "HTML fallback"}</p>
           ${jobUrlMarkup}
         </div>
       `,
-      attachments: [
-        {
-          filename: `${sanitizeFileName(job.company)}-${sanitizeFileName(job.title)}-resume.pdf`,
-          content: attachmentPdf,
-          contentType: "application/pdf",
-        },
-      ],
+      attachments: [attachment],
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      attachmentType:
+        attachment.contentType === "application/pdf" ? "pdf" : "html",
+    });
   } catch (error) {
     console.error("Email send failed:", error);
 
