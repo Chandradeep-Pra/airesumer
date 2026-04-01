@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Resumer
 
-## Getting Started
+Small Next.js app to parse jobs and a base resume, rewrite the resume per job using Gemini, preview the result, download it as PDF, and send it by email.
 
-First, run the development server:
+## Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create `.env.local` with the required keys:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key
+
+EMAIL_USER=your_email@example.com
+EMAIL_PASS=your_email_app_password
+
+( From Google Developer Account)
+```
+
+## Run
+
+Development:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Production build check:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Lint:
 
-## Learn More
+```bash
+npm run lint
+```
 
-To learn more about Next.js, take a look at the following resources:
+## How To Use
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Upload three files:
+	Excel file with job ids and URLs
+	JSON file with job details
+	DOCX resume file
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Click `Parse Jobs`.
 
-## Deploy on Vercel
+3. Use the job table to:
+	`Rewrite` one resume
+	`Generate For All`
+	`Generate Remaining`
+	`View Resume`
+	`Download PDF`
+	`Send Email`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. For email sending, enter the recipient email when prompted. The app sends one email per job with:
+	the tailored resume as a PDF attachment
+	job title, company, and job URL in the email body
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## What It Uses
+
+- Next.js App Router for UI and API routes
+- React + TypeScript for the frontend
+- Gemini API for resume rewriting
+- `xlsx` for Excel parsing
+- `mammoth` for DOCX to text extraction
+- `react-hot-toast` for live operation feedback
+- `nodemailer` for email sending
+- `puppeteer` for server-side PDF generation
+
+## Main Flow
+
+1. `/api/process` parses uploaded files and merges job data.
+2. `/api/generate` sends the base resume and job details to Gemini.
+3. Generated resumes are previewed as styled HTML and can be downloaded as PDF.
+4. `/api/send-email` converts the resume to PDF and sends it as an attachment.
