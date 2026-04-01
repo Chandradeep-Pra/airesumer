@@ -33,17 +33,17 @@ export default function ResumeTabs({
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
+    <div className="glass-panel mt-6 rounded-[30px] p-6 md:p-7">
       {/* Tabs */}
-      <div className="flex gap-2 mb-4">
+      <div className="mb-5 flex flex-wrap gap-2">
         {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => onTabChange(t.key as "original" | "parsed" | "generated")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+            className={`rounded-2xl px-4 py-2.5 text-sm font-semibold transition ${
               activeTab === t.key
-                ? "bg-[#6C63FF] text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-[#16324f] text-white shadow-[0_14px_34px_rgba(22,50,79,0.18)]"
+                : "border-2 border-[#d9e3ef] bg-white text-[#64748b] hover:border-[#16324f]"
             }`}
           >
             {t.label}
@@ -52,7 +52,7 @@ export default function ResumeTabs({
       </div>
 
       {/* Content */}
-      <div className="border rounded-xl p-4 min-h-62.5">
+      <div className="min-h-62.5 rounded-3xl border-2 border-[#d9e3ef] bg-white p-4 md:p-5">
         {activeTab === "original" && (
           <OriginalResumeView resumeFile={resumeFile} />
         )}

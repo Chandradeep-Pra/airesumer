@@ -501,30 +501,71 @@ export default function Home() {
   // ---------------- UI ----------------
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] p-6 text-[#1F2937]">
-      <h1 className="text-2xl font-bold mb-6">
-        AI Resume Tailoring Agent
-      </h1>
+    <main className="app-shell min-h-screen px-4 py-6 text-[#122033] md:px-6 lg:px-8">
+      <section className="glass-panel product-grid overflow-hidden rounded-[32px] px-6 py-8 md:px-8 md:py-10">
+        <div className="mb-8 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center rounded-full border-2 border-[#ff6b57] bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[#ff6b57] shadow-sm">
+              Resume Ops Studio
+            </span>
+            <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-[#10233a] md:text-6xl">
+              Tailor, preview, export, and send polished resumes at scale.
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-[#42546b] md:text-lg">
+              Upload your source files once, let Gemini rewrite each resume for the role,
+              then review, download PDF, or email the result.
+            </p>
+          </div>
 
-      {/* Upload */}
-      <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
-        <h2 className="text-lg font-semibold mb-4">Input Files</h2>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          <UploadCard title="Excel" accept=".xlsx" onFileSelect={setExcelFile} />
-          <UploadCard title="JSON" accept=".json" onFileSelect={setJsonFile} />
-          <UploadCard title="Resume" accept=".docx" onFileSelect={setResumeFile} />
+          <div className="grid grid-cols-2 gap-3 md:min-w-[360px]">
+            <div className="rounded-3xl bg-[#16324f] p-4 text-white shadow-[0_20px_60px_rgba(22,50,79,0.2)]">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/70">Jobs Loaded</p>
+              <p className="mt-2 text-3xl font-semibold">{jobs.length}</p>
+            </div>
+            <div className="rounded-3xl border-2 border-[#16324f] bg-[#ffffff] p-4 shadow-[0_20px_44px_rgba(16,35,58,0.08)]">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#65758b]">Remaining</p>
+              <p className="mt-2 text-3xl font-semibold text-[#ff6b57]">{remainingJobsCount}</p>
+            </div>
+            <div className="rounded-3xl bg-[#6d5efc] p-4 text-white shadow-[0_20px_52px_rgba(109,94,252,0.24)]">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/80">Ready To Run</p>
+              <p className="mt-2 text-lg font-semibold">
+                {isReady() ? "Files attached" : "Waiting for inputs"}
+              </p>
+            </div>
+            <div className="rounded-3xl bg-[#f7b32b] p-4 text-[#10233a] shadow-[0_20px_52px_rgba(247,179,43,0.24)]">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#6d4700]">Generated</p>
+              <p className="mt-2 text-3xl font-semibold text-[#10233a]">
+                {jobs.filter((job) => job.generated?.trim()).length}
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Run */}
-      <button
-        disabled={!isReady()}
-        onClick={runPipeline}
-        className="mb-6 px-6 py-3 rounded-xl bg-linear-to-r from-[#6C63FF] to-[#00C2FF] text-white disabled:opacity-50"
-      >
-        Parse Jobs
-      </button>
+        <div className="glass-panel rounded-[28px] p-6 md:p-7">
+          <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-[#10233a] md:text-xl">Input Files</h2>
+              <p className="text-sm text-[#64748b]">
+                Add your Excel, JSON, and source resume once to unlock the full pipeline.
+              </p>
+            </div>
+
+            <button
+              disabled={!isReady()}
+              onClick={runPipeline}
+              className="inline-flex items-center justify-center rounded-2xl bg-[#ff6b57] px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(255,107,87,0.24)] transition hover:scale-[1.01] hover:bg-[#ef5a46] disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              Parse Jobs
+            </button>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <UploadCard title="Excel" accept=".xlsx" onFileSelect={setExcelFile} />
+            <UploadCard title="JSON" accept=".json" onFileSelect={setJsonFile} />
+            <UploadCard title="Resume" accept=".docx" onFileSelect={setResumeFile} />
+          </div>
+        </div>
+      </section>
 
       {/* Resume */}
       {resumeText && (
@@ -537,18 +578,19 @@ export default function Home() {
         />
       )}
 
-      {/* Jobs */}
-      <JobsTable
-        bulkAction={bulkAction}
-        emailingJobId={emailingJobId}
-        jobs={jobs}
-        onGenerateAll={() => processJobsInBulk("all")}
-        onGenerateRemaining={() => processJobsInBulk("remaining")}
-        onProcess={processJob}
-        onSendEmail={sendResumeEmail}
-        onViewResume={openGeneratedResume}
-        remainingJobsCount={remainingJobsCount}
-      />
+      <div className="mt-6">
+        <JobsTable
+          bulkAction={bulkAction}
+          emailingJobId={emailingJobId}
+          jobs={jobs}
+          onGenerateAll={() => processJobsInBulk("all")}
+          onGenerateRemaining={() => processJobsInBulk("remaining")}
+          onProcess={processJob}
+          onSendEmail={sendResumeEmail}
+          onViewResume={openGeneratedResume}
+          remainingJobsCount={remainingJobsCount}
+        />
+      </div>
     </main>
   );
 }

@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #eef3f9;
+  --foreground: #10233a;
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-strong: #ffffff;
+  --border: rgba(16, 35, 58, 0.12);
+  --accent-coral: #ff6b57;
+  --accent-gold: #f7b32b;
+  --accent-cyan: #14b8d4;
+  --accent-ink: #16324f;
+  --accent-violet: #6d5efc;
+  --accent-green: #19a974;
 }
 
 @theme inline {
@@ -14,13 +23,73 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f5f7fb;
+    --foreground: #122033;
   }
+}
+
+html {
+  min-height: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 8% 10%, rgba(255, 107, 87, 0.12), transparent 16%),
+    radial-gradient(circle at 92% 18%, rgba(20, 184, 212, 0.12), transparent 18%);
+}
+
+::selection {
+  background: rgba(109, 94, 252, 0.2);
+}
+
+.app-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.app-shell::before,
+.app-shell::after {
+  content: "";
+  position: fixed;
+  inset: auto;
+  border-radius: 9999px;
+  filter: blur(60px);
+  pointer-events: none;
+  opacity: 0.6;
+  z-index: -1;
+}
+
+.app-shell::before {
+  width: 22rem;
+  height: 22rem;
+  top: 4rem;
+  right: -4rem;
+  background: rgba(20, 184, 212, 0.14);
+}
+
+.app-shell::after {
+  width: 20rem;
+  height: 20rem;
+  left: -5rem;
+  bottom: 10rem;
+  background: rgba(255, 107, 87, 0.14);
+}
+
+.glass-panel {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 64px rgba(16, 35, 58, 0.1);
+}
+
+.product-grid {
+  background-image:
+    linear-gradient(rgba(22, 50, 79, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 50, 79, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: center;
 }

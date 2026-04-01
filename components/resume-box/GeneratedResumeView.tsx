@@ -83,15 +83,15 @@ export default function GeneratedResumeView({ job }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-[#F8FAFC] p-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-3 rounded-2xl border-2 border-[#d9e3ef] bg-white p-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
+          <p className="text-xs uppercase tracking-[0.2em] text-[#64748b]">
             Generated Resume Preview
           </p>
-          <h3 className="text-lg font-semibold text-[#1F2937]">
+          <h3 className="text-lg font-semibold text-[#10233a]">
             {job.title}
           </h3>
-          <p className="text-sm text-gray-500">{job.company}</p>
+          <p className="text-sm text-[#64748b]">{job.company}</p>
         </div>
 
         <button
